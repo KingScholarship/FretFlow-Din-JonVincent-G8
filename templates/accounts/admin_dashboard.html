@@ -4,7 +4,7 @@
 <section class="dashboard">
     <p class="eyebrow">Admin workspace</p>
     <h1>FretFlow administration.</h1>
-    <p class="lede">Welcome, {{ profile.display_name|default:user.username }}.</p>
+    <p class="lede">Welcome, {{ user.display_name|default:user.username }}.</p>
     <div class="feature-grid">
         <article><span>01</span><h2>User management</h2><p><a href="/admin/">Open Django admin</a></p></article>
         <article><span>02</span><h2>Content</h2><p>Manage songs and shared catalog data.</p></article>
