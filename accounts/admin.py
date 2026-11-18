@@ -1,9 +1,16 @@
 from django.contrib import admin
-from .models import Profile
+from .models import CustomUser
+from django.contrib.auth.admin import UserAdmin
 
 
-@admin.register(Profile)
-class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'role', 'display_name')
+@admin.register(CustomUser)
+class CustomUserAdmin(UserAdmin):
+    list_display = ('username', 'email', 'role', 'display_name', 'is_staff')
     list_filter = ('role',)
-    search_fields = ('user__username', 'user__email', 'display_name')
+    search_fields = ('username', 'email', 'display_name')
+    fieldsets = UserAdmin.fieldsets + (
+        ('FretFlow', {'fields': ('role', 'display_name', 'contact_number')}),
+    )
+    add_fieldsets = UserAdmin.add_fieldsets + (
+        ('FretFlow', {'fields': ('role', 'display_name', 'contact_number')}),
+    )

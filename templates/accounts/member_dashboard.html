@@ -4,7 +4,7 @@
 <section class="dashboard">
     <p class="eyebrow">Member workspace</p>
     <h1>Keep the music moving.</h1>
-    <p class="lede">Welcome, {{ profile.display_name|default:user.username }}.</p>
+    <p class="lede">Welcome, {{ user.display_name|default:user.username }}.</p>
     <div class="feature-grid">
         <article><span>01</span><h2>Song catalog</h2><p>Practice sheets and tabs will live here.</p></article>
         <article><span>02</span><h2>Setlists</h2><p>Organize songs for rehearsal and performance.</p></article>

@@ -12,7 +12,9 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 
 import os
 from pathlib import Path
+from urllib.parse import parse_qs, unquote, urlparse
 
+from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -24,12 +26,18 @@ load_dotenv(BASE_DIR / '.env')
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-change-this-local-key')
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+if not SECRET_KEY:
+    raise ImproperlyConfigured('Set DJANGO_SECRET_KEY in .env.')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = [host.strip() for host in os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',') if host.strip()]
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
+    if host.strip()
+]
 
 
 # Application definition
@@ -77,15 +85,29 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
+SUPABASE_DB_URL = os.getenv('SUPABASE_DB_URL')
+if not SUPABASE_DB_URL:
+    raise ImproperlyConfigured('Set SUPABASE_DB_URL in .env.')
+
+database_url = urlparse(SUPABASE_DB_URL)
+if (
+    database_url.scheme not in ('postgres', 'postgresql')
+    or not database_url.hostname
+    or not database_url.username
+    or database_url.password is None
+    or not database_url.path.strip('/')
+):
+    raise ImproperlyConfigured('SUPABASE_DB_URL must be a complete PostgreSQL connection URL.')
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('SUPABASE_DB_NAME', 'postgres'),
-        'USER': os.getenv('SUPABASE_DB_USER', 'postgres'),
-        'PASSWORD': os.getenv('SUPABASE_DB_PASSWORD', ''),
-        'HOST': os.getenv('SUPABASE_DB_HOST', ''),
-        'PORT': os.getenv('SUPABASE_DB_PORT', '5432'),
-        'OPTIONS': {'sslmode': os.getenv('SUPABASE_DB_SSLMODE', 'require')},
+        'NAME': unquote(database_url.path.lstrip('/')),
+        'USER': unquote(database_url.username),
+        'PASSWORD': unquote(database_url.password),
+        'HOST': database_url.hostname,
+        'PORT': str(database_url.port or 5432),
+        'OPTIONS': {'sslmode': parse_qs(database_url.query).get('sslmode', ['require'])[0]},
     }
 }
 
@@ -127,6 +149,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
+AUTH_USER_MODEL = 'accounts.CustomUser'
 LOGIN_URL = 'accounts:login'
 LOGIN_REDIRECT_URL = 'accounts:dashboard'
 LOGOUT_REDIRECT_URL = 'accounts:login'
