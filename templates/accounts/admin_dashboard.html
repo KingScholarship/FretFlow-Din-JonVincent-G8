@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Admin dashboard | FretFlow{% endblock %}
+{% block content %}
+<section class="dashboard">
+    <p class="eyebrow">Admin workspace</p>
+    <h1>FretFlow administration.</h1>
+    <p class="lede">Welcome, {{ profile.display_name|default:user.username }}.</p>
+    <div class="feature-grid">
+        <article><span>01</span><h2>User management</h2><p><a href="/admin/">Open Django admin</a></p></article>
+        <article><span>02</span><h2>Content</h2><p>Manage songs and shared catalog data.</p></article>
+        <article><span>03</span><h2>Profile</h2><p><a href="{% url 'accounts:profile' %}">Manage your account</a></p></article>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Log in | FretFlow{% endblock %}
+{% block content %}
+<section class="auth-card">
+    <p class="eyebrow">Welcome back</p>
+    <h1>Log in to FretFlow</h1>
+    {% if form.errors %}<p class="errorlist">The username or password is incorrect.</p>{% endif %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="primary-button">Log in</button>
+    </form>
+    <p class="auth-link">New to FretFlow? <a href="{% url 'accounts:register' %}">Create an account</a></p>
+</section>
+{% endblock %}

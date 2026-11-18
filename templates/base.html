@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}FretFlow{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/site.css' %}">
+</head>
+<body>
+    <header class="topbar">
+        <a class="brand" href="{% if user.is_authenticated %}{% url 'accounts:dashboard' %}{% else %}{% url 'accounts:login' %}{% endif %}">
+            <span class="brand-mark">FF</span>
+            <span>FretFlow</span>
+        </a>
+        {% if user.is_authenticated %}
+            <nav aria-label="Main navigation">
+                <a href="{% url 'accounts:dashboard' %}">Dashboard</a>
+                <a href="{% url 'accounts:profile' %}">Profile</a>
+                <form action="{% url 'accounts:logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="text-button">Log out</button>
+                </form>
+            </nav>
+        {% endif %}
+    </header>
+    <main>
+        {% if messages %}
+            <div class="messages" role="status">
+                {% for message in messages %}
+                    <p class="message {{ message.tags }}">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>
