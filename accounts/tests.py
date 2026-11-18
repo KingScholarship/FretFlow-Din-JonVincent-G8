@@ -42,6 +42,15 @@ class AccountFeatureTests(TestCase):
         response = self.client.get(reverse('accounts:login'))
         self.assertEqual(response.status_code, 200)
 
+    def test_logout_redirects_to_login(self):
+        user = User.objects.create_user(username='member', password='Strong-pass-123')
+        self.client.login(username='member', password='Strong-pass-123')
+
+        response = self.client.post(reverse('accounts:logout'))
+
+        self.assertRedirects(response, reverse('accounts:login'))
+        self.assertNotIn('_auth_user_id', self.client.session)
+
     def test_dashboard_requires_login(self):
         response = self.client.get(reverse('accounts:dashboard'))
         self.assertRedirects(
