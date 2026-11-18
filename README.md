@@ -20,7 +20,7 @@ Build the apps in order: Accounts, Songs, then Setlists.
    .\.venv\Scripts\python.exe -m pip install -r requirements.txt
    ```
 
-2. Copy `.env.example` to `.env` if `.env` does not already exist. Fill in the Django secret and Supabase PostgreSQL connection values. Keep `.env` private; it is ignored by Git.
+2. Copy `.env.example` to `.env` if `.env` does not already exist. Set `DJANGO_SECRET_KEY` and paste your Supabase PostgreSQL connection URI into `SUPABASE_DB_URL`. URL-encode reserved characters in the database password. Keep `.env` private; it is ignored by Git.
 
 3. Apply migrations and create an administrator:
 
